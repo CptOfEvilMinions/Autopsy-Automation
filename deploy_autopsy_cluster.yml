@@ -1,0 +1,12 @@
+- hosts: autopsy
+  become: yes
+  become_user: root
+  tasks:
+    - include_vars: 'group_vars/autopsy.yml'
+    - import_tasks: 'roles/init.yml'
+    - import_tasks: 'roles/setup_zookeeper.yml'
+    - import_tasks: 'roles/setup_solr.yml'
+    - import_tasks: 'roles/setup_activemq.yml'
+    - import_tasks: 'roles/setup_postgres.yml'
+    - import_tasks: 'roles/setup_samba.yml'
+    - import_tasks: 'roles/setup_ufw.yml'

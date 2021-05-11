@@ -1,0 +1,94 @@
+######################################################
+# Install/Setup PostgresSQL
+######################################################
+- name: Add Postgres GPG pg_gpg_key_url
+  ansible.builtin.apt_key:
+    url: '{{ pg_gpg_key_url }}'
+    state: present
+
+- name: Add Postgres add repo
+  ansible.builtin.apt_repository:
+    repo: '{{ pg_repo_url }}'
+    state: present
+
+- name: Install Postgres
+  apt:
+    name: ['postgresql-{{ pg_version }}', 'python3-pip', 'libpq-dev']
+
+- name: Install Python package - psycopg2
+  pip:
+    name: 'psycopg2'
+
+- name: Disable fsync
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    regexp: '^#fsync ='
+    line: 'fsync = off'
+
+- name: Set synchronous_commit=off
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    regexp: '^#synchronous_commit ='
+    line: 'synchronous_commit = off'
+
+- name: Set full_page_writes=off
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    regexp: '^#full_page_writes ='
+    line: 'full_page_writes = off'
+
+- name: Set max_connections={{ pg_max_conns }}
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    regexp: '^max_connections ='
+    line: 'max_connections = {{ pg_max_conns }}'
+
+- name: change postgres pg hba access
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+    regexp: 'host    all             all             127.0.0.1/32            md5'
+    line: 'host    all             all             0.0.0.0/0            md5'
+
+- name: Set Postgres to listen on 0.0.0.0
+  lineinfile:
+    path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+    regexp: "#listen_addresses = 'localhost'"
+    line: "listen_addresses = '0.0.0.0'"
+
+- name: Restart Postgres
+  service:
+    name: 'postgresql'
+    state: restarted
+    enabled: yes
+
+- name: Postgres healthcheck
+  wait_for:
+    port: 5432
+    delay: 10
+
+######################################################
+# Setup Postgres database for Autopsy
+######################################################
+- name: Create database for Autopsy
+  postgresql_db:
+    name: '{{ pg_dbname }}'
+  become: yes
+  become_method: sudo
+  become_user: postgres
+
+- name: Create user for Autopsy
+  postgresql_user:
+    name: '{{ pg_user }}'
+    password: '{{ pg_password }}'
+  become: yes
+  become_method: sudo
+  become_user: postgres
+
+- name: Grant Autopsy user the ability to create databases
+  postgresql_user:
+    name: '{{ pg_user }}'
+    #password: secret
+    role_attr_flags: CREATEDB,NOSUPERUSER
+  become: yes
+  become_method: sudo
+  become_user: postgres

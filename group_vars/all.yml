@@ -1,0 +1,12 @@
+####################################### General #######################################
+base_domain: 'hackinglab.local'
+timezone: 'Etc/UTC'
+hostname: 'autopsy'
+
+### Cert info ###
+cert_country: 'US'
+cert_state: 'TX'
+cert_local: 'Austin'
+cert_org: 'Example'
+cert_ou: 'Forensics'
+cert_common_name: 'autopsy.{{ base_domain }}'

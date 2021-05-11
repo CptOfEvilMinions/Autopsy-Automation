@@ -1,0 +1,80 @@
+######################################################
+# Install/Setup Zookeeper
+######################################################
+- name: Create Zookeeper user
+  ansible.builtin.user:
+    name: 'zookeeper'
+    shell: '/usr/sbin/nologin'
+
+- name: Create Zookeeper data directory
+  ansible.builtin.file:
+    path: '{{ zookeeper_data_dir }}'
+    state: directory
+    owner: 'zookeeper'
+    group: 'zookeeper'
+
+- name: Stat Zookeeper download
+  ansible.builtin.stat:
+    path: /tmp/zookeeper-{{ zookeeper_version }}.tar.gz
+  register: zookeeper_dl_stat
+
+- name: Download Zookeeper
+  ansible.builtin.get_url:
+    url: '{{ zookeeper_dl_url }}'
+    dest: /tmp/zookeeper-{{ zookeeper_version }}.tar.gz
+  when: not zookeeper_dl_stat.stat.exists
+
+- name: Create directory for Zookeeper
+  file:
+    path: '/opt/zookeeper'
+    state: directory
+    owner: 'zookeeper'
+    group: 'zookeeper'
+  when: not zookeeper_dl_stat.stat.exists
+
+- name: Stat Zookeeper install
+  ansible.builtin.stat:
+    path: /opt/zookeeper/bin
+  register: zookeeper_install_stat
+
+- name: Unzip Zookeeper
+  ansible.builtin.unarchive:
+    src: /tmp/zookeeper-{{ zookeeper_version }}.tar.gz
+    dest: /opt/zookeeper
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+  when: not zookeeper_install_stat.stat.exists
+
+- name: Set permissions of /opt/activemq
+  file:
+    path: '/opt/zookeeper'
+    owner: 'zookeeper'
+    group: 'zookeeper'
+    recurse: yes
+
+- name: Copy Zookeeper config
+  template:
+    src: 'conf/ansible/zookeeper/zoo.cfg'
+    dest: '/opt/zookeeper/conf/zoo.cfg'
+    owner: 'zookeeper'
+    group: 'zookeeper'
+    mode: 0644
+
+- name: Copy Zookeeper SystemD
+  template:
+    src: 'conf/ansible/zookeeper/zookeeper.service'
+    dest: '/etc/systemd/system/zookeeper.service'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+
+- name: Start Zookeeper
+  service:
+    name: 'zookeeper'
+    state: restarted
+    enabled: yes
+
+- name: Zookeeper healthcheck
+  wait_for:
+    port: 2181
+    delay: 10

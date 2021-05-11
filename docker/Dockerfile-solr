@@ -1,0 +1,11 @@
+ARG SOLR_VERSION
+FROM solr:${SOLR_VERSION}
+
+ARG SOLR_VERSION
+
+# Download Autopsy Solr configs and UNzip
+RUN cd /tmp && \
+    curl -L https://sourceforge.net/projects/autopsy/files/CollaborativeServices/Solr/SOLR_${SOLR_VERSION}_AutopsyService.zip/download --output SOLR_${SOLR_VERSION}_AutopsyService.zip && \
+    unzip SOLR_${SOLR_VERSION}_AutopsyService.zip
+
+EXPOSE 8983

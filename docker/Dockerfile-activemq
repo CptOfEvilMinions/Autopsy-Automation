@@ -1,0 +1,14 @@
+ARG ACTIVEMQ_VERSION
+FROM rmohr/activemq:${ACTIVEMQ_VERSION}
+
+ARG AUTOPSY_USERNAME
+ARG AUTOPSY_PASSWORD
+
+# Copy configs
+COPY conf/activemq/activemq.xml conf/activemq.xml
+COPY conf/activemq/groups.properties conf/groups.properties
+COPY conf/activemq/users.properties conf/users.properties
+
+# Set username and passowrd
+RUN sed -i "s/{{ AUTOPSY_USERNAME }}/${AUTOPSY_USERNAME}/g" conf/activemq.xml
+RUN sed -i "s/{{ AUTOPSY_PASSWORD }}/${AUTOPSY_PASSWORD}/g" conf/activemq.xml

@@ -1,0 +1,90 @@
+######################################################
+# Install/Setup ActiveMQ
+######################################################
+- name: Create ActiveMQ user
+  ansible.builtin.user:
+    name: 'activemq'
+    shell: '/usr/sbin/nologin'
+
+- name: Stat ActiveMQ download
+  ansible.builtin.stat:
+    path: '/tmp/activemq-{{ activemq_version }}-bin.tar.gz'
+  register: activemq_dl_stat
+
+- name: Download ActiveMQ
+  ansible.builtin.get_url:
+    url: '{{ activemq_dl_url }}'
+    dest: '/tmp/activemq-{{ activemq_version }}-bin.tar.gz'
+  when: not activemq_dl_stat.stat.exists
+
+- name: Create directory for ActiveMQ
+  file:
+    path: '/opt/activemq'
+    state: directory
+    owner: 'activemq'
+    group: 'activemq'
+  when: not activemq_dl_stat.stat.exists
+
+- name: Stat ActiveMQ install
+  ansible.builtin.stat:
+    path: /opt/activemq/bin
+  register: activemq_install_stat
+
+- name: Set permissions of /opt/activemq
+  file:
+    path: '/opt/activemq'
+    state: 'directory'
+    owner: 'activemq'
+    group: 'activemq'
+    recurse: yes
+
+- name: Unzip ActiveMQ
+  ansible.builtin.unarchive:
+    src: '/tmp/activemq-{{ activemq_version }}-bin.tar.gz'
+    dest: /opt/activemq
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+  when: not activemq_install_stat.stat.exists
+
+- name: Copy activemq.xml config
+  template:
+    src: 'conf/ansible/activemq/activemq.xml'
+    dest: '/opt/activemq/conf/activemq.xml'
+    owner: 'activemq'
+    group: 'activemq'
+    mode: 0644
+
+- name: Copy ActiveMQ groups.properties config
+  template:
+    src: 'conf/ansible/activemq/groups.properties'
+    dest: '/opt/activemq/conf/groups.properties'
+    owner: 'activemq'
+    group: 'activemq'
+    mode: 0644
+
+- name: Copy ActiveMQ users.properties config
+  template:
+    src: 'conf/ansible/activemq/users.properties'
+    dest: '/opt/activemq/conf/users.properties'
+    owner: 'activemq'
+    group: 'activemq'
+    mode: 0644
+
+- name: Copy ActiveMQ service
+  template:
+    src: 'conf/ansible/activemq/activemq.service'
+    dest: '/etc/systemd/system/activemq.service'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+
+- name: Restart ActiveMQ
+  service: 
+    name: 'activemq'
+    state: 'restarted'
+    enabled: yes
+
+- name: ActiveMQ healthcheck
+  wait_for:
+    port: 61616
+    delay: 10

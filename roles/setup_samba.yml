@@ -1,0 +1,48 @@
+######################################################
+# Install/Setup Samba
+######################################################
+- name: Install Samba
+  apt:
+    name: ['samba', 'cifs-utils', 'smbclient', 'libpam-winbind']
+    state: latest
+
+- name: Copy Samba config
+  template:
+    src: 'conf/ansible/samba/smb.conf'
+    dest: /etc/samba/smb.conf
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+
+- name: Create Autopsy forensic analyst group
+  ansible.builtin.group:
+    name: '{{ samba_group }}'
+    state: present
+
+- name: Create user for samba access
+  user:
+    name: '{{ samba_user }}'
+    password: "{{ samba_password | password_hash('sha512') }}"
+    group: '{{ samba_group }}'
+
+- name: Create Samba data directory for Autopsy
+  file:
+    path: '{{ samba_path }}'
+    state: directory
+    owner: '{{ samba_user }}'
+    group: '{{ samba_group }}'
+    mode: 0775
+
+- name: Restart Samba
+  service:
+    name: '{{ item }}'
+    state: restarted
+    enabled: yes
+  with_items:
+    - 'smbd'
+    - 'nmbd'
+
+- name: Samba healthcheck
+  wait_for:
+    port: 445
+    delay: 10

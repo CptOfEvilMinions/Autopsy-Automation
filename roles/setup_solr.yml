@@ -1,0 +1,78 @@
+######################################################
+# Install/Setup Solr
+######################################################
+- name: Stat Solr install
+  ansible.builtin.stat:
+    path: /opt/solr/bin
+  register: solr_install_stat
+
+- name: Download Solr
+  ansible.builtin.get_url:
+    url: '{{ solr_dl_url }}'
+    dest: '/tmp/solr-{{ solr_version }}.tgz'
+  when: not solr_install_stat.stat.exists
+
+- name: UNtar Solr
+  ansible.builtin.unarchive:
+    src: '/tmp/solr-{{ solr_version }}.tgz'
+    dest: /tmp
+    remote_src: yes
+  when: not solr_install_stat.stat.exists
+
+- name: Install Solr
+  shell: '/tmp/solr-{{ solr_version }}/bin/install_solr_service.sh /tmp/solr-{{ solr_version }}.tgz'
+  when: not solr_install_stat.stat.exists
+
+- name: Set permissions of /opt/solr
+  file:
+    path: '/opt/solr'
+    state: 'directory'
+    owner: 'solr'
+    group: 'solr'
+    recurse: yes
+
+# https://solr.apache.org/guide/6_6/taking-solr-to-production.html#TakingSolrtoProduction-SolrCloud
+- name: Enable Solr cloud mode
+  ansible.builtin.lineinfile:
+    path: '/etc/default/solr.in.sh'
+    regexp: '^#ZK_HOST=""'
+    line: ZK_HOST="127.0.0.1"
+
+- name: Restart Solr
+  service:
+    name: 'solr'
+    state: restarted
+    enabled: yes
+
+- name: Solr healthcheck
+  wait_for:
+    port: 8983
+    delay: 10
+
+######################################################
+# Setup Autopsy Solr collections
+######################################################
+- name: Stat Autopsy solr
+  ansible.builtin.stat:
+    path: /tmp/SOLR_{{ solr_version }}_AutopsyService.zip
+  register: autopsy_solr_dl_stat
+
+- name: Download Autopsy solr
+  ansible.builtin.unarchive:
+    src: '{{ autopsy_solr_dl_url }}'
+    dest: /tmp
+    remote_src: yes
+  when: not autopsy_solr_dl_stat.stat.exists
+
+- name: Stat Autopsy Solr collections
+  ansible.builtin.find:
+    path: '/var/solr/data'
+    file_type: directory
+    patterns: 'autopsy_*'
+  register: autopsy_solr_dl_stat
+
+- name: Setup Autopsy collections
+  shell: '/opt/solr/bin/solr create_collection -c autopsy -d /tmp/SOLR_{{ solr_version }}_AutopsyService/solr-{{ solr_version }}/server/solr/configsets/AutopsyConfig/conf'
+  become: yes
+  become_user: 'solr'
+  when: autopsy_solr_dl_stat.matched == 0
