@@ -43,7 +43,7 @@
 * [How to set postgres password using ansible](https://stackoverflow.com/questions/63303090/how-to-set-postgres-password-using-ansible)
 * [Ansible create postgresql user with access to all tables?](https://stackoverflow.com/questions/40290837/ansible-create-postgresql-user-with-access-to-all-tables)
 * [Configure PostgreSQL to allow remote connection](https://bigbinary.com/blog/configure-postgresql-to-allow-remote-connection)
-* [ranting a user account permission to create databases in PostgreSQL](https://dba.stackexchange.com/questions/33285/granting-a-user-account-permission-to-create-databases-in-postgresql)
+* [Granting a user account permission to create databases in PostgreSQL](https://dba.stackexchange.com/questions/33285/granting-a-user-account-permission-to-create-databases-in-postgresql)
 * []()
 * []()
 * []()
@@ -52,7 +52,7 @@
 * [Configuration for a ZooKeeper Ensemble](https://solr.apache.org/guide/8_6/setting-up-an-external-zookeeper-ensemble.html#configuration-for-a-zookeeper-ensemble)
 * [How To Install and Configure an Apache ZooKeeper Cluster on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-an-apache-zookeeper-cluster-on-ubuntu-18-04)
 * [Installing Zookeeper on Ubuntu](https://medium.com/@ryannel/installing-zookeeper-on-ubuntu-9f1f70f22e25)
-* []()
+* [How to choose directory name during untarring](https://unix.stackexchange.com/questions/11018/how-to-choose-directory-name-during-untarring)
 
 ### Samba
 * [samba sync password with unix password on debian wheezy](https://superuser.com/questions/478521/samba-sync-password-with-unix-password-on-debian-wheezy)

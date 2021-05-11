@@ -1,0 +1,28 @@
+FROM ubuntu:20.04
+
+ARG AUTOPSY_USERNAME
+ARG AUTOPSY_PASSWORD
+
+# Install SAMBA
+RUN apt-get update -y && apt-get install samba cifs-utils smbclient libpam-winbind -y
+
+# Create autopsy and user
+RUN groupadd forensicanalysts && \
+    useradd --no-create-home ${AUTOPSY_USERNAME} -G forensicanalysts && \
+    echo "${AUTOPSY_USERNAME}:${AUTOPSY_PASSWORD}" | chpasswd && \
+    (echo "${AUTOPSY_PASSWORD}"; echo "${AUTOPSY_PASSWORD}") | smbpasswd -s -a ${AUTOPSY_USERNAME}
+
+# Create Samba data directory
+RUN mkdir -p /var/samba/autopsy && chown ${AUTOPSY_USERNAME}:forensicanalysts -R /var/samba/autopsy
+
+# Copy config
+COPY conf/docker/samba/smb.conf /etc/samba/smb.conf
+RUN sed -i "s#{{ samba_path }}#/var/samba/autopsy#g" /etc/samba/smb.conf && \
+    sed -i "s#{{ samba_user }}#${AUTOPSY_USERNAME}#g" /etc/samba/smb.conf && \
+    sed -i "s#{{ samba_group }}#forensicanalysts#g" /etc/samba/smb.conf
+
+EXPOSE 137/udp 138/udp 139/tcp 445/tcp
+VOLUME /var/samba/autopsy
+
+# Start Samba
+CMD ["smbd", "--foreground", "--log-stdout", "--no-process-group"]

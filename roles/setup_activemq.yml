@@ -30,14 +30,6 @@
     path: /opt/activemq/bin
   register: activemq_install_stat
 
-- name: Set permissions of /opt/activemq
-  file:
-    path: '/opt/activemq'
-    state: 'directory'
-    owner: 'activemq'
-    group: 'activemq'
-    recurse: yes
-
 - name: Unzip ActiveMQ
   ansible.builtin.unarchive:
     src: '/tmp/activemq-{{ activemq_version }}-bin.tar.gz'
@@ -69,6 +61,14 @@
     owner: 'activemq'
     group: 'activemq'
     mode: 0644
+
+- name: Set permissions of /opt/activemq
+  file:
+    path: '/opt/activemq'
+    state: 'directory'
+    owner: 'activemq'
+    group: 'activemq'
+    recurse: yes
 
 - name: Copy ActiveMQ service
   template:

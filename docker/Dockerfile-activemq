@@ -5,9 +5,9 @@ ARG AUTOPSY_USERNAME
 ARG AUTOPSY_PASSWORD
 
 # Copy configs
-COPY conf/activemq/activemq.xml conf/activemq.xml
-COPY conf/activemq/groups.properties conf/groups.properties
-COPY conf/activemq/users.properties conf/users.properties
+COPY conf/docker/activemq/activemq.xml conf/activemq.xml
+COPY conf/docker/activemq/groups.properties conf/groups.properties
+COPY conf/docker/activemq/users.properties conf/users.properties
 
 # Set username and passowrd
 RUN sed -i "s/{{ AUTOPSY_USERNAME }}/${AUTOPSY_USERNAME}/g" conf/activemq.xml

@@ -25,6 +25,9 @@
     password: "{{ samba_password | password_hash('sha512') }}"
     group: '{{ samba_group }}'
 
+- name: Create password for {{ samba_user }} user smbpasswd
+  shell: (echo "{{ samba_password }}"; echo "{{ samba_password }}") | smbpasswd -s -a {{ samba_user }}
+
 - name: Create Samba data directory for Autopsy
   file:
     path: '{{ samba_path }}'
