@@ -1,5 +1,7 @@
 # Autopsy multicluster Autoamtion
 
+Blog post: [Getting started with Autopsy multi-user cluster](https://holdmybeersecurity.com/2021/05/11/getting-started-with-autopsy-multi-user-cluster/)
+
 ## References
 ### Ansible
 * [How to check if a file exists in Ansible?](https://stackoverflow.com/questions/35654286/how-to-check-if-a-file-exists-in-ansible)
