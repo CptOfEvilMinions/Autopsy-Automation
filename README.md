@@ -1,6 +1,11 @@
-# Autopsy multicluster Autoamtion
+# Autopsy multicluster Automation
 
-Blog post: [Getting started with Autopsy multi-user cluster](https://holdmybeersecurity.com/2021/05/11/getting-started-with-autopsy-multi-user-cluster/)
+## Description
+The purpose of this repository is to share resources for providing multiple methods on how to install/setup an Autopsy multi-client cluster.
+Blog post about it is available here: [Getting started with Autopsy multi-user cluster](https://holdmybeersecurity.com/2021/05/11/getting-started-with-autopsy-multi-user-cluster/).
+
+This blog post generated an infrastructure-as-code in the form of an Ansible playbook, Docker-compose, and manual instructions for setting up a cluster.
+In addition, this blog post will demonstrate how to setup the Autopsy client to connect to the Autopsy cluster and how to ingest disk images.
 
 ## References
 ### Ansible
@@ -14,26 +19,14 @@ Blog post: [Getting started with Autopsy multi-user cluster](https://holdmybeers
 * [ansible.builtin.apt_key](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html)
 * [community.general.ufw](https://docs.ansible.com/ansible/latest/collections/community/general/ufw_module.html)
 * [postgresql_user](https://docs.ansible.com/ansible/2.5/modules/postgresql_user_module.html)
-* []()
-* []()
-* []()
-* []()
 
 ### Autopsy
 * [sourceforge - Autopsy](https://sourceforge.net/projects/autopsy/)
-* []()
-* []()
-* []()
 
 ### ActiveMQ
 * [DockerHub - rmohr/activemq](https://hub.docker.com/r/rmohr/activemq)
 * [Autopsy docs - Install and Configure ActiveMQ](http://sleuthkit.org/autopsy/docs/user-docs/4.18.0/install_activemq_page.html)
 * [How to Install Apache ActiveMQ on Ubuntu 18.04 | 16.04](https://websiteforstudents.com/how-to-install-apache-activemq-on-ubuntu-18-04-16-04/)
-* []()
-* []()
-* []()
-* []()
-* []()
 
 ### Postgres
 * [DockerHub - postgres](https://hub.docker.com/_/postgres?tab=description)
@@ -46,9 +39,6 @@ Blog post: [Getting started with Autopsy multi-user cluster](https://holdmybeers
 * [Ansible create postgresql user with access to all tables?](https://stackoverflow.com/questions/40290837/ansible-create-postgresql-user-with-access-to-all-tables)
 * [Configure PostgreSQL to allow remote connection](https://bigbinary.com/blog/configure-postgresql-to-allow-remote-connection)
 * [Granting a user account permission to create databases in PostgreSQL](https://dba.stackexchange.com/questions/33285/granting-a-user-account-permission-to-create-databases-in-postgresql)
-* []()
-* []()
-* []()
 
 ### Zookeeper
 * [Configuration for a ZooKeeper Ensemble](https://solr.apache.org/guide/8_6/setting-up-an-external-zookeeper-ensemble.html#configuration-for-a-zookeeper-ensemble)
@@ -73,6 +63,3 @@ Blog post: [Getting started with Autopsy multi-user cluster](https://holdmybeers
 * [Setting up Solr Cloud 8.4.1 with Zookeeper 3.5.6](https://medium.com/@sarkaramrit2/setting-up-solr-cloud-6-3-0-with-zookeeper-3-4-6-867b96ec4272)
 * [Taking Solr to Production](https://solr.apache.org/guide/6_6/taking-solr-to-production.html#TakingSolrtoProduction-SolrCloud)
 * [How to Install Apache Solr on Ubuntu 20.04](https://www.howtoforge.com/apache-solr-ubuntu-20_04/)
-* []()
-* []()
-* []()
